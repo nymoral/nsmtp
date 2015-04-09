@@ -1,0 +1,43 @@
+<!doctype html>
+<head>
+	<title>nSMTP</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='pure-min.css') }}">
+</head>
+<body>
+	<div class="pure-g" style="margin-top: 60px;">
+		<div class="pure-u-1-6">
+		</div>
+		<div class="pure-u-5-6">
+			<form class="pure-form" action="/" method="post">
+				<fieldset class="pure-group">
+					<input required name="from_email" type="email" class="pure-input-1-6" placeholder="From:" value="{% if from_email %}{{ from_email }}{% endif %}">
+					<input required name="to_email" type="email" class="pure-input-1-6" placeholder="To:" value="{% if to_email %}{{ to_email }}{% endif %}">
+				</fieldset>
+
+				<fieldset class="pure-group">
+					<input name="subject" type="text" class="pure-input-1-2" placeholder="Subject" value="{% if subject %}{{ subject }}{% endif %}">
+					<textarea name="message" class="pure-input-1-2" placeholder="Message">{% if message %}{{ message }}{% endif %}</textarea>
+				</fieldset>
+
+				<fieldset class="pure-group">
+					<input required name="server_name" type="text" class="pure-input-1-6" placeholder="Server" value="{% if server_name  %}{{ server_name }}{% else %}smtp.gmail.com{% endif %}">
+					<input required name="port" type="number" class="pure-input-1-6" placeholder="Port" value="{% if port %}{{ port }}{% else %}465{% endif %}">
+					<input name="username" type="text" class="pure-input-1-6" placeholder="Username:" value="{% if username %}{{ username }}{% endif %}">
+					<input name="password" type="password" class="pure-input-1-6" placeholder="Password:">
+				</fieldset>
+
+				<button type="submit" class="pure-button pure-button-primary">Send</button>
+			</form>
+			{% if error_message %}
+			<div id="error-message">
+				<p style="color: #FF6B6B;">{{ error_message }}</p>
+			</div>
+			{% endif %}
+			{% if success %}
+			<div id="success-message">
+				<p style="color: #C7F464;">Email was sent!</p>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</body>

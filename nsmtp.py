@@ -10,6 +10,7 @@ import signal
 from sys import stderr
 
 # Some exceptions:
+
 class MailError(Exception):
     def __init__(self, *args):
         super(Exception, self).__init__(" ".join(str(v) for v in args))
@@ -27,7 +28,7 @@ class TimeoutError(MailError):
     pass
 
 
-def new_smtp_connection(host, port, use_ssl=True, timeout=4):
+def new_smtp_connection(host, port, timeout=4):
 
     """ Try to make a TCP connection to host:port.
         Returns socket.socket (ssl.SSLSocket with ssl, but they're compatable). """
@@ -36,9 +37,8 @@ def new_smtp_connection(host, port, use_ssl=True, timeout=4):
         raise TimeoutError("Connection timed out on me")
 
     cl = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    if use_ssl:
-        ctx = ssl.create_default_context()
-        cl = ctx.wrap_socket(cl, server_hostname=host)
+    ctx = ssl.create_default_context()
+    cl = ctx.wrap_socket(cl, server_hostname=host)
     signal.signal(signal.SIGALRM, handle_timeout)
     signal.alarm(timeout)
     try:
@@ -273,6 +273,8 @@ class SMTPSession(object):
             self.send_command(cmd)
             resp = self.get_response()
             self.ignore_responses(resp)
+            if resp.code != "250":
+                raise MailError("Failed to send recipients", resp.comment())
             
 
     def send_body(self, msg):
@@ -341,8 +343,8 @@ class MailSender(object):
         Exception sometimes includes first line of servers comment.
         """
 
-    def __init__(self, host, port, ssl=True, debug=False):
-        self.session = SMTPSession(new_smtp_connection(host, port, ssl), debug)
+    def __init__(self, host, port, debug=False):
+        self.session = SMTPSession(new_smtp_connection(host, port), debug)
         self.session_started = False
 
 
@@ -376,4 +378,5 @@ class MailSender(object):
     def authenticate(self, user):
         self.session.authenticate(user)
         return self
+
 

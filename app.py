@@ -1,3 +1,6 @@
+# Copyright (c) 2015, Aivaras Saulius
+# All rights reserved.
+
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -7,6 +10,7 @@ import os
 from nsmtp import *
 
 app = Flask(__name__)
+
 
 class EmailForm(object):
 
@@ -21,14 +25,18 @@ class EmailForm(object):
         self.password= form.get("password", "")
         self.error_message = None
 
+
     def get_dict(self):
         return self.__dict__
+
 
     def need_auth(self):
         return self.username != ""
 
+
     def set_message(self, message):
         self.error_message = message
+
 
 def make_sender(server, port):
     try:
@@ -39,7 +47,6 @@ def make_sender(server, port):
     except Exception as e:
         return ("Internal error nr 1 (" + str(e) + ")", None)
 
-    return ("UNREACHABLE!", None)
 
 def send_mail(f):
     sender = f.from_email
@@ -69,8 +76,10 @@ def send_mail(f):
 
     return None
 
+
 def generate_get():
     return render_template("home.html")
+
 
 def generate_post():
     f = EmailForm(request.form)
@@ -81,12 +90,14 @@ def generate_post():
         return render_template("home.html", success=True)
     return render_template("home.html", **f.get_dict())
 
+
 @app.route("/", methods=['POST', 'GET'])
 def home():
     if request.method == "POST":
         return generate_post()
     else:
         return generate_get()
+
 
 if __name__ == "__main__":
     app.run()

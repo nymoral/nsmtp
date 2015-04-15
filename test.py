@@ -1,3 +1,6 @@
+# Copyright (c) 2015, Aivaras Saulius
+# All rights reserved.
+
 from nsmtp import *
 import getpass
 
@@ -8,9 +11,9 @@ def send_test():
     user = User(username, password)
 
     sender = username
-    to_list = ["aivaras.saulius@gmail.com"]
+    to_list = ["aivaras.saulius@outlook.com"]
     subject = "Email subject"
-    body = """Hello, there!\nHow's it hangin'?\r\n. <-- This dot should be visable."""
+    body = """Hello, there!\nHow's it hangin'?\r\n.\r\n^  This dot should be visable."""
 
     body = format_message_body(sender, to_list, subject, body)
     msg = Message(sender, to_list, body)
